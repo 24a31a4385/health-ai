@@ -88,8 +88,11 @@
 <script>
 // PAGE SWITCH
 function showPage(pageId) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("resultPage").style.display = "none";
+
+  document.getElementById(pageId).style.display = "block";
 }
 
 // LOGIN SIMPLE

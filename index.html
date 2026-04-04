@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Health Assistant</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      text-align: center;
+    }
+
+    .page {
+      display: none;
+      padding-top: 100px;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #00c6ff;
+      color: black;
+    }
+
+    #result {
+      text-align: left;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="page active">
+  <div class="card">
+    <h2>AI Health Assistant</h2>
+    <input id="username" placeholder="Enter Name"><br>
+    <button onclick="goToHome()">Continue</button>
+  </div>
+</div>
+
+<!-- HOME PAGE -->
+<div id="homePage" class="page">
+  <div class="card">
+    <h2>Enter Health Details</h2>
+    <input id="age" placeholder="Age"><br>
+    <input id="weight" placeholder="Weight"><br>
+    <input id="problem" placeholder="Describe problem"><br>
+
+    <button onclick="startVoice()">🎤 Voice</button>
+    <button onclick="analyze()">Analyze</button>
+  </div>
+</div>
+
+<!-- RESULT PAGE -->
+<div id="resultPage" class="page">
+  <div class="card">
+    <h2>Health Report</h2>
+    <div id="result"></div>
+    <button onclick="goBack()">Back</button>
+  </div>
+</div>
+
+<script>
+// PAGE SWITCH
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+}
+
+// LOGIN SIMPLE
+function goToHome() {
+  const name = document.getElementById("username").value;
+  if (name === "") {
+    alert("Enter your name");
+    return;
+  }
+  showPage("homePage");
+}
+
+// 🎤 VOICE
+function startVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Voice not supported");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+
+  recognition.onresult = (event) => {
+    document.getElementById("problem").value =
+      event.results[0][0].transcript;
+  };
+
+  recognition.start();
+}
+
+// 🤖 AI LOGIC
+function analyze() {
+  const p = document.getElementById("problem").value.toLowerCase();
+
+  let title="", explanation="", advice="", reminder="";
+
+  if (p.includes("sweating") || p.includes("hyperhidrosis")) {
+    title = "Hyperhidrosis";
+    explanation = "Excess sweating due to overactive glands.";
+    advice = "Stay cool and hydrated.";
+    reminder = "Drink water every 30 mins.";
+  }
+  else if (p.includes("fever")) {
+    title = "Fever";
+    explanation = "Body temperature rise due to infection.";
+    advice = "Rest and drink fluids.";
+    reminder = "Check temperature regularly.";
+  }
+  else if (p.includes("headache")) {
+    title = "Headache";
+    explanation = "Caused by stress or dehydration.";
+    advice = "Take rest and hydrate.";
+    reminder = "Avoid screens.";
+  }
+  else if (p.includes("cold") || p.includes("cough")) {
+    title = "Cold / Cough";
+    explanation = "Common viral infection.";
+    advice = "Drink warm fluids.";
+    reminder = "Take medicines.";
+  }
+  else {
+    title = "General Health Issue";
+    explanation = "Mild imbalance detected.";
+    advice = "Maintain healthy lifestyle.";
+    reminder = "Stay hydrated.";
+  }
+
+  document.getElementById("result").innerHTML = `
+    <h3>${title}</h3>
+    <p><b>Explanation:</b> ${explanation}</p>
+    <p><b>Advice:</b> ${advice}</p>
+    <p><b>Reminder:</b> ${reminder}</p>
+    <p style="color:red;">*This is not a medical diagnosis</p>
+  `;
+
+  showPage("resultPage");
+
+  // 🔔 Notification
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+
+  setTimeout(() => {
+    new Notification("Health Reminder", { body: reminder });
+  }, 5000);
+}
+
+// BACK
+function goBack() {
+  showPage("homePage");
+}
+</script>
+
+</body>
+</html>

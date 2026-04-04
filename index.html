@@ -297,11 +297,14 @@ function analyze() {
   }
 
   document.getElementById("result").innerHTML = `
-    <h3>${title}</h3>
-    <p><b>Explanation:</b> ${explanation}</p>
-    <p><b>Advice:</b> ${advice}</p>
-    <p><b>Reminder:</b> ${reminder}</p>
-  `;
+  <h3>${title}</h3>
+  <p><b>Explanation:</b> ${explanation}</p>
+  <p><b>Advice:</b> ${advice}</p>
+  <p><b>Reminder:</b> ${reminder}</p>
+  <p style="opacity:0.6; font-size:12px;">
+    AI-based suggestion only
+  </p>
+`;
 
   showPage("resultPage");
 

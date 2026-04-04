@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>AI Health Assistant</title>
@@ -25,27 +25,36 @@
       padding: 30px;
       border-radius: 15px;
       display: inline-block;
+      backdrop-filter: blur(10px);
     }
 
     input {
       padding: 10px;
       margin: 10px;
       width: 250px;
+      border-radius: 5px;
+      border: none;
     }
 
     button {
       padding: 10px 15px;
       margin: 5px;
-      background: #00c6ff;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
+      background: #00c6ff;
+      color: black;
+    }
+
+    #result {
+      text-align: left;
     }
   </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN PAGE -->
 <div id="loginPage" class="page active">
   <div class="card">
     <h2>AI Health Assistant</h2>
@@ -54,46 +63,67 @@
   </div>
 </div>
 
-<!-- HOME -->
+<!-- HOME PAGE -->
 <div id="homePage" class="page">
   <div class="card">
-    <h2>Enter Problem</h2>
-    <input id="problem" placeholder="Type problem"><br>
+    <h2>Enter Health Details</h2>
+    <input id="age" placeholder="Age"><br>
+    <input id="weight" placeholder="Weight"><br>
+    <input id="problem" placeholder="Describe problem"><br>
+
+    <button onclick="startVoice()">🎤 Voice</button>
     <button onclick="analyze()">Analyze</button>
   </div>
 </div>
 
-<!-- RESULT -->
+<!-- RESULT PAGE -->
 <div id="resultPage" class="page">
   <div class="card">
-    <h2>Result</h2>
+    <h2>Health Report</h2>
     <div id="result"></div>
     <button onclick="goBack()">Back</button>
   </div>
 </div>
 
 <script>
-
-// PAGE SWITCH FUNCTION
+// PAGE SWITCH
 function showPage(pageId) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
 }
 
-// CONTINUE BUTTON FIX
+// LOGIN SIMPLE
 function goToHome() {
   const name = document.getElementById("username").value;
-
-  if (name.trim() === "") {
+  if (name === "") {
     alert("Enter your name");
     return;
   }
-
   showPage("homePage");
 }
-  
+
+// 🎤 VOICE
+function startVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Voice not supported");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+
+  recognition.onresult = (event) => {
+    document.getElementById("problem").value =
+      event.results[0][0].transcript;
+  };
+
+  recognition.start();
+}
+
 // 🤖 AI LOGIC
-function analyze() {
+   function analyze() {
   const p = document.getElementById("problem").value.toLowerCase();
 
   let title="", explanation="", advice="", reminder="";
@@ -267,11 +297,11 @@ function analyze() {
   }
 
   document.getElementById("result").innerHTML = `
-  <h3>${title}</h3>
-  <p><b>Explanation:</b> ${explanation}</p>
-  <p><b>Advice:</b> ${advice}</p>
-  <p><b>Reminder:</b> ${reminder}</p>
-`;
+    <h3>${title}</h3>
+    <p><b>Explanation:</b> ${explanation}</p>
+    <p><b>Advice:</b> ${advice}</p>
+    <p><b>Reminder:</b> ${reminder}</p>
+  `;
 
   showPage("resultPage");
 

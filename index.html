@@ -1,106 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Health Assistant</title>
   <style>
-    body { font-family: Arial; margin: 0; background: linear-gradient(135deg,#1e3c72,#2a5298); color: white; text-align: center; }
-    .page { display: none; padding-top: 100px; }
+    .page { display: none; padding-top:50px; }
     .active { display: block; }
-    .card { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; display: inline-block; backdrop-filter: blur(10px); }
-    input { padding: 10px; margin: 10px; width: 250px; border-radius: 5px; border: none; }
-    button { padding: 10px 15px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #00c6ff; color: black; font-weight: bold; }
-    #result { text-align: left; margin-top: 20px; }
+    button { padding: 10px 15px; margin:5px; cursor:pointer; }
   </style>
 </head>
 <body>
-
-<!-- LOGIN PAGE -->
 <div id="loginPage" class="page active">
-  <div class="card">
-    <h2>AI Health Assistant</h2>
-    <input id="username" placeholder="Enter Name"><br>
-    <button onclick="goToHome()">Continue</button>
-  </div>
+  <h2>Login Page</h2>
+  <input id="username" placeholder="Enter Name">
+  <button onclick="goToHome()">Continue</button>
 </div>
 
-<!-- HOME PAGE -->
 <div id="homePage" class="page">
-  <div class="card">
-    <h2>Enter Health Details</h2>
-    <input id="age" placeholder="Age"><br>
-    <input id="weight" placeholder="Weight"><br>
-    <input id="problem" placeholder="Describe problem"><br>
-    <button onclick="startVoice()">🎤 Voice</button>
-    <button onclick="analyze()">Analyze</button>
-  </div>
+  <h2>Home Page</h2>
+  <input id="problem" placeholder="Describe problem">
+  <button onclick="analyze()">Analyze</button>
 </div>
 
-<!-- RESULT PAGE -->
 <div id="resultPage" class="page">
-  <div class="card">
-    <h2>Health Report</h2>
-    <div id="result"></div>
-    <button onclick="goBack()">Back</button>
-  </div>
+  <h2>Result Page</h2>
+  <div id="result"></div>
+  <button onclick="goBack()">Back</button>
 </div>
 
 <script>
-  // PAGE SWITCH
-  function showPage(pageId) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById(pageId).classList.add("active");
-  }
+function showPage(pageId){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+}
 
-  function goToHome() {
-    const name = document.getElementById("username").value.trim();
-    if (!name) { alert("Enter your name"); return; }
-    showPage("homePage");
-  }
+function goToHome(){
+  const name = document.getElementById("username").value.trim();
+  if(!name){ alert("Enter name"); return; }
+  showPage("homePage");
+}
 
-  function goBack() { showPage("homePage"); }
+function goBack(){ showPage("homePage"); }
 
-  // VOICE INPUT
-  function startVoice() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) { alert("Voice not supported"); return; }
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.onresult = e => document.getElementById("problem").value = e.results[0][0].transcript;
-    recognition.start();
-  }
-
-  // AI ANALYSIS
-  function analyze() {
-    const p = document.getElementById("problem").value.toLowerCase();
-    let title="", explanation="", advice="", reminder="";
-
-    if (p.includes("sweating") || p.includes("hyperhidrosis")) {
-      title="Hyperhidrosis"; explanation="Excess sweating due to overactive sweat glands."; advice="Stay cool, wear breathable clothes."; reminder="Drink water frequently.";
-    } else if (p.includes("fever")) {
-      title="Fever"; explanation="Rise in body temperature due to infection."; advice="Rest and drink fluids."; reminder="Check temperature regularly.";
-    } else if (p.includes("cold") || p.includes("cough")) {
-      title="Cold / Cough"; explanation="Common viral infection."; advice="Drink warm fluids."; reminder="Avoid cold drinks.";
-    } else if (p.includes("headache") || p.includes("migraine")) {
-      title="Headache / Migraine"; explanation="May be due to stress or dehydration."; advice="Rest and avoid bright light."; reminder="Reduce screen time.";
-    } else { 
-      title="General Health Observation"; explanation=`Based on "${p}", it may be a mild issue.`; advice="Stay healthy and monitor symptoms."; reminder="Consult doctor if needed.";
-    }
-
-    document.getElementById("result").innerHTML = `
-      <h3>${title}</h3>
-      <p><b>Explanation:</b> ${explanation}</p>
-      <p><b>Advice:</b> ${advice}</p>
-      <p><b>Reminder:</b> ${reminder}</p>
-    `;
-
-    showPage("resultPage");
-
-    if (Notification.permission !== "granted") Notification.requestPermission();
-    setTimeout(() => new Notification("Health Reminder",{body:reminder}),1000);
-  }
+function analyze(){
+  const p = document.getElementById("problem").value;
+  document.getElementById("result").innerHTML = `<p>You wrote: ${p}</p>`;
+  showPage("resultPage");
+}
 </script>
-
 </body>
 </html>

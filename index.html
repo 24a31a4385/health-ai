@@ -1,51 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>AI Health Assistant</title>
-  <style>
-    .page { display: none; padding-top:50px; }
-    .active { display: block; }
-    button { padding: 10px 15px; margin:5px; cursor:pointer; }
-  </style>
-</head>
-<body>
-<div id="loginPage" class="page active">
-  <h2>Login Page</h2>
-  <input id="username" placeholder="Enter Name">
-  <button onclick="goToHome()">Continue</button>
-</div>
+function analyze() {
+  const p = document.getElementById("problem").value.toLowerCase();
 
-<div id="homePage" class="page">
-  <h2>Home Page</h2>
-  <input id="problem" placeholder="Describe problem">
-  <button onclick="analyze()">Analyze</button>
-</div>
+  let title = "", explanation = "", advice = "", reminder = "";
 
-<div id="resultPage" class="page">
-  <h2>Result Page</h2>
-  <div id="result"></div>
-  <button onclick="goBack()">Back</button>
-</div>
+  if (p.includes("sweating") || p.includes("hyperhidrosis")) {
+    title = "Hyperhidrosis";
+    explanation = "Excess sweating due to overactive sweat glands.";
+    advice = "Stay cool, wear breathable clothes.";
+    reminder = "Drink water frequently.";
+  } else if (p.includes("fever") || p.includes("temperature") || p.includes("hot")) {
+    title = "Fever";
+    explanation = "Rise in body temperature due to infection.";
+    advice = "Rest and drink fluids.";
+    reminder = "Check temperature regularly.";
+  } else if (p.includes("cold") || p.includes("cough") || p.includes("flu")) {
+    title = "Cold / Cough";
+    explanation = "Common viral infection.";
+    advice = "Drink warm fluids, eat vitamin C rich food.";
+    reminder = "Avoid cold drinks and rest well.";
+  } else if (p.includes("stomach") || p.includes("tummy") || p.includes("gas") || p.includes("vomit") || p.includes("diarrhea")) {
+    title = "Digestive Issue";
+    explanation = "Problem related to digestion.";
+    advice = "Avoid junk food, eat light meals.";
+    reminder = "Drink warm water and rest.";
+  } else if (p.includes("headache") || p.includes("migraine") || p.includes("ache")) {
+    title = "Headache / Migraine";
+    explanation = "May be due to stress, dehydration or eyestrain.";
+    advice = "Rest, hydrate, reduce screen time.";
+    reminder = "Avoid bright lights.";
+  } else {
+    // DEFAULT SMART AI
+    title = "General Health Observation";
+    explanation = `Based on your input: "${p}", it may be a mild health issue.`;
+    advice = "Monitor symptoms, stay hydrated and rest.";
+    reminder = "Consult a doctor if it worsens.";
+  }
 
-<script>
-function showPage(pageId){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
-}
+  // SHOW RESULTS
+  document.getElementById("result").innerHTML = `
+    <h3>${title}</h3>
+    <p><b>Explanation:</b> ${explanation}</p>
+    <p><b>Advice:</b> ${advice}</p>
+    <p><b>Precautions / Reminder:</b> ${reminder}</p>
+  `;
 
-function goToHome(){
-  const name = document.getElementById("username").value.trim();
-  if(!name){ alert("Enter name"); return; }
-  showPage("homePage");
-}
-
-function goBack(){ showPage("homePage"); }
-
-function analyze(){
-  const p = document.getElementById("problem").value;
-  document.getElementById("result").innerHTML = `<p>You wrote: ${p}</p>`;
   showPage("resultPage");
 }
-</script>
-</body>
-</html>

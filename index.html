@@ -30,6 +30,7 @@
     <input id="age" placeholder="Age"><br>
     <input id="weight" placeholder="Weight"><br>
     <input id="problem" placeholder="Describe problem"><br>
+    <button onclick="startVoice()">🎤 Voice</button>
     <button onclick="analyze()">Analyze</button>
   </div>
 </div>
@@ -58,32 +59,58 @@
 
   function goBack(){ showPage("homePage"); }
 
-  // ANALYZE FUNCTION
+  // VOICE INPUT
+  function startVoice(){
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition){ alert("Voice not supported"); return; }
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.onresult = e => document.getElementById("problem").value = e.results[0][0].transcript;
+    recognition.start();
+  }
+
+  // AI ANALYSIS
   function analyze(){
     const p = document.getElementById("problem").value.toLowerCase();
     let title="", explanation="", advice="", reminder="";
 
+    // SWEATING
     if(p.includes("sweating") || p.includes("hyperhidrosis")){
       title="Hyperhidrosis";
       explanation="Excess sweating due to overactive sweat glands.";
       advice="Stay cool, wear breathable clothes.";
       reminder="Drink water frequently.";
-    } else if(p.includes("fever")){
+    }
+    // FEVER
+    else if(p.includes("fever") || p.includes("temperature") || p.includes("hot")){
       title="Fever";
       explanation="Rise in body temperature due to infection.";
       advice="Rest and drink fluids.";
       reminder="Check temperature regularly.";
-    } else if(p.includes("cold") || p.includes("cough")){
+    }
+    // COLD/COUGH
+    else if(p.includes("cold") || p.includes("cough") || p.includes("flu")){
       title="Cold / Cough";
       explanation="Common viral infection.";
-      advice="Drink warm fluids.";
-      reminder="Avoid cold drinks.";
-    } else if(p.includes("stomach") || p.includes("tummy") || p.includes("gas") || p.includes("vomit") || p.includes("diarrhea")){
+      advice="Drink warm fluids, eat vitamin C rich food.";
+      reminder="Avoid cold drinks and rest well.";
+    }
+    // STOMACH
+    else if(p.includes("stomach") || p.includes("tummy") || p.includes("gas") || p.includes("vomit") || p.includes("diarrhea")){
       title="Digestive Issue";
       explanation="Problem related to digestion.";
       advice="Avoid junk food, eat light meals.";
       reminder="Drink warm water and rest.";
-    } else {
+    }
+    // HEADACHE
+    else if(p.includes("headache") || p.includes("migraine") || p.includes("ache")){
+      title="Headache / Migraine";
+      explanation="May be due to stress, dehydration, or eyestrain.";
+      advice="Rest, hydrate, reduce screen time.";
+      reminder="Avoid bright lights.";
+    }
+    // DEFAULT
+    else {
       title="General Health Observation";
       explanation=`Based on your input: "${p}", it may be a mild health issue.`;
       advice="Monitor symptoms, stay hydrated and rest.";
@@ -98,7 +125,8 @@
       <p><b>Precautions / Reminder:</b> ${reminder}</p>
     `;
 
-    showPage("resultPage"); // SWITCH PAGE
+    // SWITCH PAGE
+    showPage("resultPage");
   }
 </script>
 

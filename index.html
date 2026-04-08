@@ -102,6 +102,20 @@
       advice="Avoid junk food, eat light meals.";
       reminder="Drink warm water and rest.";
     }
+      // CHEST PAIN
+      else if(p.includes("chest pain") || p.includes("tightness")){
+  title="Chest Pain";
+  explanation="Could be serious. Needs immediate attention.";
+  advice="Consult a doctor immediately.";
+  reminder="Do not ignore symptoms.";
+}
+        // STRESS
+        else if(p.includes("stress") || p.includes("anxiety")){
+    title="Stress / Anxiety";
+    explanation="Mental pressure affecting health.";
+    advice="Practice meditation and relax.";
+    reminder="Take breaks regularly.";
+}
     // HEADACHE
     else if(p.includes("headache") || p.includes("migraine") || p.includes("ache")){
       title="Headache / Migraine";

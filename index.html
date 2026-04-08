@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Health Assistant</title>
   <style>
     body {
@@ -44,14 +46,15 @@
       cursor: pointer;
       background: #00c6ff;
       color: black;
+      font-weight: bold;
     }
 
     #result {
       text-align: left;
+      margin-top: 20px;
     }
   </style>
 </head>
-
 <body>
 
 <!-- LOGIN PAGE -->
@@ -70,7 +73,6 @@
     <input id="age" placeholder="Age"><br>
     <input id="weight" placeholder="Weight"><br>
     <input id="problem" placeholder="Describe problem"><br>
-
     <button onclick="startVoice()">🎤 Voice</button>
     <button onclick="analyze()">Analyze</button>
   </div>
@@ -86,234 +88,183 @@
 </div>
 
 <script>
-// PAGE SWITCH
-function showPage(pageId) {
-  document.getElementById("loginPage").style.display = "none";
-  document.getElementById("homePage").style.display = "none";
-  document.getElementById("resultPage").style.display = "none";
+  // PAGE SWITCH
+  function showPage(pageId) {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("resultPage").style.display = "none";
 
-  document.getElementById(pageId).style.display = "block";
-}
-
-// LOGIN SIMPLE
-function goToHome() {
-  const name = document.getElementById("username").value;
-  if (name === "") {
-    alert("Enter your name");
-    return;
-  }
-  showPage("homePage");
-}
-
-// 🎤 VOICE
-function startVoice() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("Voice not supported");
-    return;
+    document.getElementById(pageId).style.display = "block";
   }
 
-  const recognition = new SpeechRecognition();
-  recognition.lang = "en-US";
-
-  recognition.onresult = (event) => {
-    document.getElementById("problem").value =
-      event.results[0][0].transcript;
-  };
-
-  recognition.start();
-}
-
-// 🤖 AI LOGIC
-   function analyze() {
-  const p = document.getElementById("problem").value.toLowerCase();
-
-  let title="", explanation="", advice="", reminder="";
-
-  // 🟡 SWEATING
-  if (p.includes("sweating") || p.includes("hyperhidrosis")) {
-    title = "Hyperhidrosis";
-    explanation = "Excess sweating due to overactive sweat glands.";
-    advice = "Stay cool, wear breathable clothes.";
-    reminder = "Drink water frequently.";
+  // LOGIN
+  function goToHome() {
+    const name = document.getElementById("username").value;
+    if (name === "") {
+      alert("Enter your name");
+      return;
+    }
+    showPage("homePage");
   }
 
-  // 🔴 FEVER
-  else if (p.includes("fever")) {
-    title = "Fever";
-    explanation = "Rise in body temperature due to infection.";
-    advice = "Rest and drink fluids.";
-    reminder = "Check temperature regularly.";
+  // VOICE INPUT
+  function startVoice() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice not supported");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event) => {
+      document.getElementById("problem").value =
+        event.results[0][0].transcript;
+    };
+
+    recognition.start();
   }
 
-  // 🤧 COLD / COUGH
-  else if (p.includes("cold") || p.includes("cough")) {
-    title = "Cold / Cough";
-    explanation = "Common viral infection.";
-    advice = "Drink warm fluids.";
-    reminder = "Avoid cold drinks.";
+  // BACK TO HOME
+  function goBack() {
+    showPage("homePage");
   }
 
-  // 🤕 HEADACHE
-  else if (p.includes("headache") || p.includes("migraine")) {
-    title = "Headache / Migraine";
-    explanation = "May be due to stress or dehydration.";
-    advice = "Rest and avoid bright light.";
-    reminder = "Reduce screen time.";
+  // AI ANALYSIS
+  function analyze() {
+    const p = document.getElementById("problem").value.toLowerCase();
+
+    let title="", explanation="", advice="", reminder="";
+
+    if (p.includes("sweating") || p.includes("hyperhidrosis")) {
+      title = "Hyperhidrosis";
+      explanation = "Excess sweating due to overactive sweat glands.";
+      advice = "Stay cool, wear breathable clothes.";
+      reminder = "Drink water frequently.";
+    } else if (p.includes("fever")) {
+      title = "Fever";
+      explanation = "Rise in body temperature due to infection.";
+      advice = "Rest and drink fluids.";
+      reminder = "Check temperature regularly.";
+    } else if (p.includes("cold") || p.includes("cough")) {
+      title = "Cold / Cough";
+      explanation = "Common viral infection.";
+      advice = "Drink warm fluids.";
+      reminder = "Avoid cold drinks.";
+    } else if (p.includes("headache") || p.includes("migraine")) {
+      title = "Headache / Migraine";
+      explanation = "May be due to stress or dehydration.";
+      advice = "Rest and avoid bright light.";
+      reminder = "Reduce screen time.";
+    } else if (p.includes("tired") || p.includes("fatigue")) {
+      title = "Fatigue";
+      explanation = "Body tiredness due to lack of rest.";
+      advice = "Sleep well and eat healthy.";
+      reminder = "Sleep at least 7 hours.";
+    } else if (p.includes("stomach") || p.includes("gas") || p.includes("vomit") || p.includes("diarrhea")) {
+      title = "Digestive Issue";
+      explanation = "Problem related to digestion.";
+      advice = "Avoid junk food.";
+      reminder = "Drink warm water.";
+    } else if (p.includes("chest pain")) {
+      title = "Chest Pain";
+      explanation = "Could be serious. Needs attention.";
+      advice = "Consult doctor immediately.";
+      reminder = "Do not ignore symptoms.";
+    } else if (p.includes("stress") || p.includes("anxiety")) {
+      title = "Stress / Anxiety";
+      explanation = "Mental pressure affecting health.";
+      advice = "Practice meditation.";
+      reminder = "Take regular breaks.";
+    } else if (p.includes("dizzy")) {
+      title = "Dizziness";
+      explanation = "May be due to low BP or dehydration.";
+      advice = "Sit down and hydrate.";
+      reminder = "Avoid sudden movements.";
+    } else if (p.includes("body pain")) {
+      title = "Body Pain";
+      explanation = "Muscle strain or weakness.";
+      advice = "Take rest.";
+      reminder = "Avoid heavy work.";
+    } else if (p.includes("heart") || p.includes("palpitation")) {
+      title = "Heart Rate Issue";
+      explanation = "Irregular heartbeat or stress.";
+      advice = "Stay calm.";
+      reminder = "Avoid stress.";
+    } else if (p.includes("bp") || p.includes("pressure")) {
+      title = "Blood Pressure";
+      explanation = "High or low BP condition.";
+      advice = "Reduce salt.";
+      reminder = "Monitor BP.";
+    } else if (p.includes("diabetes") || p.includes("sugar")) {
+      title = "Diabetes";
+      explanation = "High blood sugar levels.";
+      advice = "Avoid sugar.";
+      reminder = "Check sugar levels.";
+    } else if (p.includes("tooth") || p.includes("teeth")) {
+      title = "Tooth Problem";
+      explanation = "Tooth decay or infection.";
+      advice = "Brush regularly.";
+      reminder = "Visit dentist.";
+    } else if (p.includes("eye")) {
+      title = "Eye Strain";
+      explanation = "Due to screen usage.";
+      advice = "Rest eyes.";
+      reminder = "Follow 20-20-20 rule.";
+    } else if (p.includes("ear")) {
+      title = "Ear Issue";
+      explanation = "Infection or blockage.";
+      advice = "Avoid inserting objects.";
+      reminder = "Consult doctor if pain continues.";
+    } else if (p.includes("allergy")) {
+      title = "Allergy";
+      explanation = "Reaction to allergens.";
+      advice = "Avoid triggers.";
+      reminder = "Take antihistamines if needed.";
+    } else if (p.includes("memory") || p.includes("forget")) {
+      title = "Memory Issue";
+      explanation = "Stress or lack of focus.";
+      advice = "Practice concentration exercises.";
+      reminder = "Sleep well.";
+    } else if (p.includes("breath") || p.includes("asthma")) {
+      title = "Breathing Problem";
+      explanation = "Respiratory issue.";
+      advice = "Avoid dust.";
+      reminder = "Use inhaler if prescribed.";
+    } else if (p.includes("sleep") || p.includes("insomnia")) {
+      title = "Sleep Problem";
+      explanation = "Irregular sleep pattern.";
+      advice = "Maintain sleep routine.";
+      reminder = "Avoid phone before bed.";
+    } else {
+      title = "General Health Observation";
+      explanation = `Based on "${p}", it may be a mild issue.`;
+      advice = "Stay healthy and monitor symptoms.";
+      reminder = "Consult doctor if needed.";
+    }
+
+    document.getElementById("result").innerHTML = `
+      <h3>${title}</h3>
+      <p><b>Explanation:</b> ${explanation}</p>
+      <p><b>Advice:</b> ${advice}</p>
+      <p><b>Reminder:</b> ${reminder}</p>
+    `;
+
+    showPage("resultPage");
+
+    // 🔔 Notification
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
+    setTimeout(() => {
+      new Notification("Health Reminder", { body: reminder });
+    }, 1000);
   }
+</script>
 
-  // 😴 FATIGUE
-  else if (p.includes("tired") || p.includes("fatigue")) {
-    title = "Fatigue";
-    explanation = "Body tiredness due to lack of rest.";
-    advice = "Sleep well and eat healthy.";
-    reminder = "Sleep at least 7 hours.";
-  }
-
-  // 🤢 STOMACH
-  else if (p.includes("stomach") || p.includes("gas") || p.includes("vomit") || p.includes("diarrhea")) {
-    title = "Digestive Issue";
-    explanation = "Problem related to digestion.";
-    advice = "Avoid junk food.";
-    reminder = "Drink warm water.";
-  }
-
-  // 💔 CHEST PAIN
-  else if (p.includes("chest pain")) {
-    title = "Chest Pain";
-    explanation = "Could be serious. Needs attention.";
-    advice = "Consult doctor immediately.";
-    reminder = "Do not ignore symptoms.";
-  }
-
-  // 😰 STRESS
-  else if (p.includes("stress") || p.includes("anxiety")) {
-    title = "Stress / Anxiety";
-    explanation = "Mental pressure affecting health.";
-    advice = "Practice meditation.";
-    reminder = "Take regular breaks.";
-  }
-
-  // 😵 DIZZINESS
-  else if (p.includes("dizzy")) {
-    title = "Dizziness";
-    explanation = "May be due to low BP or dehydration.";
-    advice = "Sit down and hydrate.";
-    reminder = "Avoid sudden movements.";
-  }
-
-  // 🦴 BODY PAIN
-  else if (p.includes("body pain")) {
-    title = "Body Pain";
-    explanation = "Muscle strain or weakness.";
-    advice = "Take rest.";
-    reminder = "Avoid heavy work.";
-  }
-
-  // ❤️ HEART
-  else if (p.includes("heart") || p.includes("palpitation")) {
-    title = "Heart Rate Issue";
-    explanation = "Irregular heartbeat or stress.";
-    advice = "Stay calm.";
-    reminder = "Avoid stress.";
-  }
-
-  // 🩺 BP
-  else if (p.includes("bp") || p.includes("pressure")) {
-    title = "Blood Pressure";
-    explanation = "High or low BP condition.";
-    advice = "Reduce salt.";
-    reminder = "Monitor BP.";
-  }
-
-  // 🍬 DIABETES
-  else if (p.includes("diabetes") || p.includes("sugar")) {
-    title = "Diabetes";
-    explanation = "High blood sugar levels.";
-    advice = "Avoid sugar.";
-    reminder = "Check sugar levels.";
-  }
-
-  // 🦷 TOOTH
-  else if (p.includes("tooth") || p.includes("teeth")) {
-    title = "Tooth Problem";
-    explanation = "Tooth decay or infection.";
-    advice = "Brush regularly.";
-    reminder = "Visit dentist.";
-  }
-
-  // 👁️ EYE
-  else if (p.includes("eye")) {
-    title = "Eye Strain";
-    explanation = "Due to screen usage.";
-    advice = "Rest eyes.";
-    reminder = "Follow 20-20-20 rule.";
-  }
-
-  // 👂 EAR
-  else if (p.includes("ear")) {
-    title = "Ear Issue";
-    explanation = "Infection or blockage.";
-    advice = "Avoid inserting objects.";
-    reminder = "Consult doctor if pain continues.";
-  }
-
-  // 🦠 ALLERGY
-  else if (p.includes("allergy")) {
-    title = "Allergy";
-    explanation = "Reaction to allergens.";
-    advice = "Avoid triggers.";
-    reminder = "Take antihistamines if needed.";
-  }
-
-  // 🧠 MEMORY
-  else if (p.includes("memory") || p.includes("forget")) {
-    title = "Memory Issue";
-    explanation = "Stress or lack of focus.";
-    advice = "Practice concentration exercises.";
-    reminder = "Sleep well.";
-  }
-
-  // 😷 BREATHING
-  else if (p.includes("breath") || p.includes("asthma")) {
-    title = "Breathing Problem";
-    explanation = "Respiratory issue.";
-    advice = "Avoid dust.";
-    reminder = "Use inhaler if prescribed.";
-  }
-
-  // 💤 SLEEP
-  else if (p.includes("sleep") || p.includes("insomnia")) {
-    title = "Sleep Problem";
-    explanation = "Irregular sleep pattern.";
-    advice = "Maintain sleep routine.";
-    reminder = "Avoid phone before bed.";
-  }
-
-  // ⚡ DEFAULT SMART AI
-  else {
-    title = "General Health Observation";
-    explanation = `Based on "${p}", it may be a mild issue.`;
-    advice = "Stay healthy and monitor symptoms.";
-    reminder = "Consult doctor if needed.";
-  }
-
-  document.getElementById("result").innerHTML = `
-    <h3>${title}</h3>
-    <p><b>Explanation:</b> ${explanation}</p>
-    <p><b>Advice:</b> ${advice}</p>
-    <p><b>Reminder:</b> ${reminder}</p>
-  `;
-
-  showPage("resultPage");
-
-  // 🔔 Notification
-  if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-  }
-
-  setTimeout(() => {
-    new Notification("Health Reminder", { body: reminder });
+</body>
+</html>
   }, 5000);
 }
